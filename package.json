@@ -14,9 +14,12 @@
   "author": "charmyparmar",
   "type": "commonjs",
   "main": "server.js",
- "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+  "scripts": {
+    "test": "echo \"No tests yet\"",
+    "dev": "nodemon server.js",
+    "prepare": "husky",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "dotenv": "^17.4.1",
@@ -26,5 +29,30 @@
     "method-override": "^3.0.0",
     "mongoose": "^9.4.1",
     "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.2.0",
+    "globals": "^17.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.8.2"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.json": [
+      "prettier --write"
+    ],
+    "*.css": [
+      "prettier --write"
+    ],
+    "*.html": [
+      "prettier --write"
+    ]
   }
 }
