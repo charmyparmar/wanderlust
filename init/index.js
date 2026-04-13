@@ -1,14 +1,14 @@
-const mongoose = require("mongoose");
-const initData = require("./data");
-const { Listing } = require("../models/listing");
+const mongoose = require('mongoose');
+const initData = require('./data');
+const { Listing } = require('../models/listing');
 
-require("dotenv").config();
+require('dotenv').config();
 
 const database_url = process.env.MONGO_URL;
 
 main()
   .then(() => {
-    console.log("connected to DB");
+    console.log('connected to DB');
   })
   .catch((err) => {
     console.log(err);
@@ -21,7 +21,7 @@ async function main() {
 const initDB = async () => {
   await Listing.deleteMany({});
   await Listing.insertMany(initData.data);
-  console.log("data was initialized");
+  console.log('data was initialized');
 };
 
 initDB();
