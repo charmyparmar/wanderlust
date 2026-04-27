@@ -1,0 +1,52 @@
+<!-- Show details about listing -->
+ 
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-4 g-5">
+  <!-- Left Side: Image -->
+  <div class="col-12 col-md-6">
+    <div class="card border-0 show-card shadow-sm h-100">
+      <img
+        src="<%= listing.image %>"
+        class="card-img-top show-img"
+        style="height: 100%; min-height: 400px; border-radius: 1.5rem;"
+        alt="listing_image"
+      />
+    </div>
+  </div>
+
+  <!-- Right Side: Details -->
+  <div class="col-12 col-md-6">
+    <div class="p-2">
+      <h2 class="mb-3 fw-bold"><%= listing.title %></h2>
+      <p class="text-muted fs-5 mb-4"><i class="fa-solid fa-location-dot me-2"></i><%= listing.location %>, <%= listing.country %></p>
+      
+      <div class="h3 mb-4 fw-bold text-primary">&#8377; <%= listing.price.toLocaleString('en-IN') %> <small class="text-muted fw-normal fs-6">/ night</small></div>
+      
+      <hr class="my-4 opacity-10">
+      
+      <div class="mb-5">
+        <h5 class="fw-bold mb-3">About this place</h5>
+        <p class="card-text text-secondary leading-relaxed fs-6">
+          <%= listing.description %>
+        </p>
+      </div>
+
+      <div class="btns d-flex gap-3 mt-auto">
+        <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark edit-btn px-4 py-2">
+          <i class="fa-solid fa-pen-to-square me-2"></i>Edit 
+        </a>
+
+        <form
+          method="POST"
+          action="/listings/<%= listing._id %>?_method=DELETE"
+          class="d-inline"
+        >
+          <button class="btn btn-outline-danger px-4 py-2">
+            <i class="fa-solid fa-trash-can me-2"></i>Delete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
