@@ -7,7 +7,7 @@ const listingSchema = new Schema(
       type: String,
       required: [true, 'Title is required'],
     },
-    descrition: {
+    description: {
       type: String,
       required: [true, 'Description is required'],
     },
