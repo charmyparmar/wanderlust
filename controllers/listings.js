@@ -1,4 +1,5 @@
 const { Listing } = require('../models/listing');
+const ExpressError = require('../utils/ExpressError');
 
 // Index
 module.exports.index = async (req, res) => {
@@ -25,7 +26,7 @@ module.exports.showListing = async (req, res) => {
   res.render('listings/show', { listing });
 };
 
-// Edit
+// Get Edit
 module.exports.renderEditForm = async (req, res) => {
   const { id } = req.params;
   const listing = await Listing.findById(id);
@@ -35,10 +36,14 @@ module.exports.renderEditForm = async (req, res) => {
 // Update
 module.exports.updateListing = async (req, res) => {
   const { id } = req.params;
-  await Listing.findByIdAndUpdate(id, req.body.listing, {
+  const updateListing = await Listing.findByIdAndUpdate(id, req.body.listing, {
     runValidators: true,
-    new: true,
+    returnDocument: 'after',
   });
+
+  if (!updateListing) {
+    throw new ExpressError(404, 'Listing not found');
+  }
   res.redirect(`/listings/${id}`);
 };
 
