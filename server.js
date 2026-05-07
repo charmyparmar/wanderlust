@@ -34,8 +34,16 @@ app.get('/', (req, res) => {
 
 app.use('/listings', listingsRoutes);
 
-app.all('*', (req, res, next) => {
+app.use((req, res, next) => {
   next(new ExpressError(404, 'Page not Found!!'));
+});
+
+app.use((err, req, res, next) => {
+  if (err.name === 'ValidationError') {
+    return res.status(400).send(err.message);
+  }
+  let { statusCode = 500, message = 'Something went wrong!!' } = err;
+  res.status(statusCode).render('Error.ejs', { err });
 });
 
 // Server
