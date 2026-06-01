@@ -50,3 +50,104 @@
     </div>
   </div>
 </div>
+
+
+<div class="row mt-5">
+  <div class="col-12 col-md-10 offset-md-1">
+    <hr class="my-4 opacity-10">
+    
+    <!-- Leave a Review Form -->
+    <div class="review-form-container p-4 bg-light rounded-4 mb-5 border border-light-subtle shadow-sm">
+      <h4 class="fw-bold mb-3"><i class="fa-solid fa-comment-dots me-2 text-primary"></i>Leave a Review</h4>
+      <form action="/listings/<%= listing._id %>/reviews" method="POST" class="needs-validation" novalidate>
+        
+        <!-- Star Rating -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Rating</label>
+          <div class="star-rating-selector">
+            <input type="radio" id="star5" name="review[rating]" value="5" required />
+            <label for="star5" title="5 stars"><i class="fa-solid fa-star"></i></label>
+            
+            <input type="radio" id="star4" name="review[rating]" value="4" />
+            <label for="star4" title="4 stars"><i class="fa-solid fa-star"></i></label>
+            
+            <input type="radio" id="star3" name="review[rating]" value="3" />
+            <label for="star3" title="3 stars"><i class="fa-solid fa-star"></i></label>
+            
+            <input type="radio" id="star2" name="review[rating]" value="2" />
+            <label for="star2" title="2 stars"><i class="fa-solid fa-star"></i></label>
+            
+            <input type="radio" id="star1" name="review[rating]" value="1" />
+            <label for="star1" title="1 star"><i class="fa-solid fa-star"></i></label>
+          </div>
+          <div class="invalid-feedback">Please select a rating.</div>
+        </div>
+
+        <!-- Comments -->
+        <div class="mb-3">
+          <label for="comment" class="form-label fw-semibold">Comments</label>
+          <textarea
+            name="review[comment]"
+            id="comment"
+            cols="30"
+            rows="4"
+            class="form-control rounded-3 border-grey"
+            placeholder="Write your experience here..."
+            required
+          ></textarea>
+          <div class="invalid-feedback">Please submit a comment for review.</div>
+        </div>
+        
+        <button class="btn btn-outline-dark px-4 py-2 fw-semibold rounded-3 mt-2 transition-all">
+          <i class="fa-solid fa-paper-plane me-2"></i>Submit Review
+        </button>
+      </form>
+    </div>
+
+    <!-- All Reviews Section -->
+    <div class="reviews-section">
+      <h4 class="fw-bold mb-4"><i class="fa-solid fa-star me-2 text-warning"></i>All Reviews (<%= listing.reviews.length %>)</h4>
+      
+      <% if (listing.reviews.length === 0) { %>
+        <p class="text-muted fs-6 italic">No reviews yet. Be the first to review this place!</p>
+      <% } else { %>
+        <div class="row g-3">
+          <% for(review of listing.reviews) { %>
+            <div class="col-12 col-md-6">
+              <div class="card h-100 review-card border border-light-subtle rounded-3 p-3 shadow-sm bg-white">
+                <div class="card-body p-0 d-flex flex-column h-100">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="card-title fw-bold mb-0 text-dark">
+                      <i class="fa-solid fa-circle-user me-2 text-secondary fs-5"></i>Anonymous Guest
+                    </h6>
+                    <span class="text-muted fs-7"><%= new Date(review.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+                  </div>
+                  
+                  <!-- Rating Stars -->
+                  <div class="review-stars mb-2">
+                    <% for(let i = 1; i <= 5; i++) { %>
+                      <i class="fa-<%= i <= review.rating ? 'solid' : 'regular' %> fa-star text-warning"></i>
+                    <% } %>
+                  </div>
+                  
+                  <p class="card-text text-secondary mb-3 fs-6 flex-grow-1"><%= review.comment %></p>
+                  
+                  <form
+                    class="mt-auto d-flex justify-content-end"
+                    method="POST"
+                    action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+                  >
+                    <button class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1">
+                      <i class="fa-solid fa-trash-can me-1"></i>Delete
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+

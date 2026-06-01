@@ -8,6 +8,7 @@ const ExpressError = require('./utils/ExpressError');
 require('dotenv').config();
 
 const listingsRoutes = require('./routes/listings');
+const reviewsRoutes = require('./routes/review');
 
 const PORT = process.env.PORT;
 const database_url = process.env.MONGO_URL;
@@ -33,6 +34,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/listings', listingsRoutes);
+app.use('/listings/:id/reviews', reviewsRoutes);
 
 app.use((req, res, next) => {
   next(new ExpressError(404, 'Page not Found!!'));
