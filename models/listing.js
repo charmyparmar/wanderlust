@@ -41,6 +41,10 @@ const listingSchema = new Schemas(
       type: Date,
       default: null,
     },
+    owner: {
+      type: Schemas.Types.ObjectId,
+      ref: 'User',
+    },
   },
   {
     timestamps: true,
