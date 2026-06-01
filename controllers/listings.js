@@ -15,6 +15,7 @@ module.exports.renderNewForm = (req, res) => {
 // Create
 module.exports.createListing = async (req, res) => {
   const newListing = new Listing(req.body.listing);
+  newListing.owner = req.user._id;
   await newListing.save();
   res.redirect('/listings');
 };
