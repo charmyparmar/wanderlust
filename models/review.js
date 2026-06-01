@@ -13,6 +13,10 @@ const reviewSchema = new Schema(
       max: 5,
       required: [true, 'rating is required'],
     },
+    author: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
   { timestamps: true }
 );

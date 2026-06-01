@@ -23,7 +23,14 @@ module.exports.createListing = async (req, res) => {
 // Show
 module.exports.showListing = async (req, res) => {
   const { id } = req.params;
-  const listing = await Listing.findById(id).populate('reviews');
+  const listing = await Listing.findById(id)
+    .populate({
+      path: 'reviews',
+      populate: {
+        path: 'author',
+      },
+    })
+    .populate('owner');
   res.render('listings/show', { listing });
 };
 

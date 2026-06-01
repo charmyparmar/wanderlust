@@ -11,6 +11,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 require('dotenv').config();
+const MongoStore = require('connect-mongo').MongoStore;
 
 const listingsRoutes = require('./routes/listings');
 const reviewsRoutes = require('./routes/review');
@@ -34,13 +35,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, '/public')));
 
+const store = MongoStore.create({
+  mongoUrl: database_url,
+  crypto: {
+    secret: 'mysupersecretcode',
+  },
+  touchAfter: 24 * 3600,
+});
+
 const sessionOptions = {
+  store,
   secret: 'mysupersecretcode',
   resave: false,
   saveUninitialized: true,
   cookie: {
-    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    expires: Date.now() + 8 * 60 * 60 * 1000,
+    maxAge: 8 * 60 * 60 * 1000,
     httpOnly: true,
   },
 };
@@ -76,7 +86,6 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  // eslint-disable-line no-unused-vars
   if (err.name === 'ValidationError') {
     return res.status(400).send(err.message);
   }
