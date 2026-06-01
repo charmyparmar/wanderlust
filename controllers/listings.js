@@ -22,7 +22,7 @@ module.exports.createListing = async (req, res) => {
 // Show
 module.exports.showListing = async (req, res) => {
   const { id } = req.params;
-  const listing = await Listing.findById(id);
+  const listing = await Listing.findById(id).populate('reviews');
   res.render('listings/show', { listing });
 };
 

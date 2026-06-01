@@ -13,7 +13,7 @@
 }
 
 body {
-  font-family: "Plus Jakarta Sans", sans-serif !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -32,7 +32,7 @@ body {
   background-color: rgba(255, 255, 255, 0.8) !important;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
   transition: var(--transition);
 }
 
@@ -58,7 +58,7 @@ body {
 }
 
 .nav-link::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0.5rem;
@@ -80,7 +80,7 @@ body {
 /* Footer */
 footer {
   background-color: var(--light);
-  border-top: 1px solid rgba(0,0,0,0.05);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
   padding: 2rem 0;
 }
 
@@ -177,7 +177,8 @@ footer {
 }
 
 /* Buttons */
-.add-btn, .edit-btn {
+.add-btn,
+.edit-btn {
   background-color: var(--primary) !important;
   border: none !important;
   padding: 0.6rem 1.5rem;
@@ -186,7 +187,8 @@ footer {
   transition: var(--transition);
 }
 
-.add-btn:hover, .edit-btn:hover {
+.add-btn:hover,
+.edit-btn:hover {
   opacity: 0.9;
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(254, 66, 77, 0.3);
@@ -212,4 +214,53 @@ footer {
   display: flex;
   gap: 1rem;
   margin-top: 1.5rem;
+}
+
+/* Star Rating Selector (Interactive Form) */
+.star-rating-selector {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  font-size: 1.75rem;
+  justify-content: flex-end;
+}
+
+.star-rating-selector input {
+  display: none;
+}
+
+.star-rating-selector label {
+  color: #ddd;
+  cursor: pointer;
+  padding: 0 0.1rem;
+  transition: var(--transition);
+}
+
+/* Hover and active states */
+.star-rating-selector label:hover,
+.star-rating-selector label:hover ~ label,
+.star-rating-selector input:checked ~ label {
+  color: #ffc107;
+}
+
+.star-rating-selector input:checked + label:hover,
+.star-rating-selector input:checked + label:hover ~ label,
+.star-rating-selector input:checked ~ label:hover,
+.star-rating-selector input:checked ~ label:hover ~ label,
+.star-rating-selector label:hover ~ input:checked ~ label {
+  color: #ffca28;
+}
+
+/* Review Cards */
+.review-card {
+  transition: var(--transition);
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.review-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.review-stars i {
+  font-size: 0.9rem;
 }
