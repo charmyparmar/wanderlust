@@ -1,30 +1,248 @@
-<!-- Index show all listing -->
-
+<!-- Index show all listings with search support and category filters -->
 
 <% layout("/layouts/boilerplate") %>
 
-<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3 g-4">
-  <% for (let listing of allListings) { %>
+<!-- Horizontal Scroll Categories Filter Bar -->
+<div id="filters" class="d-flex align-items-center overflow-x-auto py-2 mb-4" style="scrollbar-width: none; gap: 2rem; border-bottom: 1px solid rgba(0, 0, 0, 0.07);">
+  <% 
+  const categories = [
+    { name: 'Rooms', icon: 'fa-bed' },
+    { name: 'Iconic Cities', icon: 'fa-mountain-city' },
+    { name: 'Mountains', icon: 'fa-mountain' },
+    { name: 'Castles', icon: 'fa-fort-awesome' },
+    { name: 'Amazing Pools', icon: 'fa-person-swimming' },
+    { name: 'Camping', icon: 'fa-campground' },
+    { name: 'Farms', icon: 'fa-cow' },
+    { name: 'Arctic', icon: 'fa-snowflake' }
+  ];
+  %>
+  <% for (let cat of categories) { %>
+    <a href="/listings?category=<%= cat.name %>" class="filter-item text-decoration-none d-flex flex-column align-items-center text-center <%= selectedCategory === cat.name ? 'active' : '' %>" style="transition: 0.2s ease; min-width: 60px;">
+      <div class="filter-icon mb-1" style="font-size: 1.3rem;">
+        <i class="fa-solid <%= cat.icon %>"></i>
+      </div>
+      <div class="filter-name" style="font-size: 0.75rem; font-weight: 500;"><%= cat.name %></div>
+    </a>
+  <% } %>
+</div>
+
+<!-- Header Section (Search query status if active) -->
+<% if (searchQuery) { %>
+  <div class="alert alert-light border border-light-subtle rounded-4 p-3 mb-4 shadow-sm d-flex align-items-center justify-content-between">
+    <div>
+      <h5 class="fw-bold text-dark mb-1"><i class="fa-solid fa-magnifying-glass me-2 text-primary"></i>Search Results</h5>
+      <p class="text-muted small mb-0">Showing accommodations matching "<span class="fw-semibold text-primary"><%= searchQuery %></span>"</p>
+    </div>
+    <a href="/listings" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1.5 small">Clear Search</a>
+  </div>
+<% } %>
+
+<!-- Skeleton Loader Grid (Visible while loading page assets) -->
+<div id="skeleton-loader" class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-2 g-4">
+  <% for(let i = 0; i < 6; i++) { %>
     <div class="col">
-      <a href="/listings/<%= listing._id %>" class="listing-link">
-        <div class="card h-100 border-0">
-          <img 
-            src="<%= listing.image%>" 
-            class="card-img-top" 
-            alt="<%= listing.title %>"
-          />
-          <div class="card-body">
-            <p class="card-text">
-              <b class="d-block text-dark"><%= listing.title %></b>
-              <% if (listing && listing.price) { %>
-                <span class="text-secondary fw-500">&#8377;<%= listing.price.toLocaleString('en-IN') %> / night</span>
-              <% } else { %>
-                <span class="text-muted">Price not available</span>
-              <% } %>
-            </p>
-          </div>
+      <div class="card h-100 border-0 rounded-4 overflow-hidden bg-transparent">
+        <div class="skeleton-img rounded-4 shimmers" style="height: 18rem;"></div>
+        <div class="card-body px-1 py-3">
+          <div class="skeleton-text shimmers mb-2" style="height: 1.25rem; width: 75%; border-radius: 4px;"></div>
+          <div class="skeleton-text shimmers mb-1" style="height: 0.9rem; width: 45%; border-radius: 4px;"></div>
+          <div class="skeleton-text shimmers" style="height: 1.1rem; width: 30%; border-radius: 4px;"></div>
         </div>
-      </a>
+      </div>
     </div>
   <% } %>
 </div>
+
+<!-- Listings Container (Initially Hidden, Toggled via JS) -->
+<div id="listings-container" class="d-none">
+  <!-- Listings Section -->
+  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-2 g-4">
+    <% if (allListings.length === 0) { %>
+      <div class="col-12 text-center py-5">
+        <div class="text-muted fs-1 mb-3"><i class="fa-solid fa-magnifying-glass-location"></i></div>
+        <h4 class="fw-bold text-dark">No stays found</h4>
+        <p class="text-muted small">We couldn't find any stays matching this selection. Try choosing another category or clearing search!</p>
+        <a href="/listings" class="btn btn-dark edit-btn px-4 py-2 mt-2 border-0 text-white rounded-3">
+          <i class="fa-solid fa-house-chimney me-2"></i>Show All Stays
+        </a>
+      </div>
+    <% } else { %>
+      <% for (let listing of allListings) { %>
+        <div class="col">
+          <div class="card h-100 border-0 rounded-4 overflow-hidden bg-transparent transition-all hover-scale" style="position: relative;">
+            <!-- Wishlist Heart Button -->
+            <% 
+              let isWishlisted = false;
+              if (currUser && currUser.wishlist && currUser.wishlist.includes(listing._id.toString())) {
+                isWishlisted = true;
+              }
+            %>
+            <button class="wishlist-btn" data-id="<%= listing._id %>" aria-label="Toggle Wishlist">
+              <i class="<%= isWishlisted ? 'fa-solid fa-heart' : 'fa-regular fa-heart' %>"></i>
+            </button>
+            
+            <a href="/listings/<%= listing._id %>" class="listing-link">
+              <!-- Image Frame -->
+              <div class="overflow-hidden rounded-4" style="position: relative;">
+                <img 
+                  src="<%= listing.image.url %>" 
+                  class="card-img-top w-100" 
+                  style="height: 18rem; object-fit: cover; transition: var(--transition);" 
+                  alt="<%= listing.title %>"
+                />
+              </div>
+              
+              <div class="card-body px-1 py-3">
+                <p class="card-text mb-0">
+                  <b class="d-block text-dark text-truncate" style="font-size: 1.05rem;"><%= listing.title %></b>
+                  <span class="text-muted small d-block mb-1"><i class="fa-solid fa-location-dot me-1"></i><%= listing.location %>, <%= listing.country %></span>
+                  
+                  <% if (listing && listing.price) { %>
+                    <span class="text-secondary fw-bold">&#8377; <%= listing.price.toLocaleString('en-IN') %> <small class="fw-normal text-muted">/ night</small></span>
+                  <% } else { %>
+                    <span class="text-muted">Price not available</span>
+                  <% } %>
+                </p>
+              </div>
+            </a>
+          </div>
+        </div>
+      <% } %>
+    <% } %>
+  </div>
+</div>
+
+<style>
+  #filters::-webkit-scrollbar {
+    display: none;
+  }
+  .filter-item {
+    opacity: 0.7;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 0.5rem;
+    color: var(--text-muted, #717171) !important;
+  }
+  .filter-item:hover {
+    opacity: 1;
+    color: var(--text-main, #000) !important;
+    border-bottom-color: #b0b0b0;
+  }
+  .filter-item.active {
+    opacity: 1;
+    color: var(--primary, #fe424d) !important;
+    border-bottom-color: var(--primary, #fe424d);
+  }
+  
+  .wishlist-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: white;
+    cursor: pointer;
+    z-index: 10;
+    text-shadow: 0 0 6px rgba(0,0,0,0.6);
+    transition: transform 0.2s ease;
+    padding: 0;
+    outline: none;
+  }
+  .wishlist-btn:hover {
+    transform: scale(1.15);
+  }
+  .wishlist-btn .fa-solid {
+    color: #ff385c;
+  }
+  
+  .hover-scale {
+    transition: var(--transition);
+  }
+  .hover-scale:hover {
+    transform: translateY(-5px);
+  }
+  .hover-scale:hover img {
+    transform: scale(1.03);
+  }
+  
+  /* Skeleton Loading Styles */
+  .skeleton-img {
+    background-color: var(--grey, #e0e0e0);
+  }
+  
+  .shimmers {
+    background: linear-gradient(
+      90deg,
+      rgba(211, 211, 211, 0.4) 25%,
+      rgba(230, 230, 230, 0.6) 37%,
+      rgba(211, 211, 211, 0.4) 63%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+  }
+  
+  [data-bs-theme='dark'] .shimmers {
+    background: linear-gradient(
+      90deg,
+      rgba(45, 45, 45, 0.4) 25%,
+      rgba(60, 60, 60, 0.6) 37%,
+      rgba(45, 45, 45, 0.4) 63%
+    );
+    background-size: 400% 100%;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0 50%;
+    }
+  }
+  
+  [data-bs-theme='dark'] #filters {
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.wishlist-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const listingId = btn.getAttribute('data-id');
+      try {
+        const response = await fetch(`/wishlist/toggle/${listingId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        if (response.status === 401) {
+          // Redirect to login if unauthorized
+          window.location.href = '/login';
+          return;
+        }
+        const data = await response.json();
+        const icon = btn.querySelector('i');
+        if (data.added) {
+          icon.className = 'fa-solid fa-heart';
+        } else {
+          icon.className = 'fa-regular fa-heart';
+        }
+      } catch (err) {
+        console.error('Error toggling wishlist:', err);
+      }
+    });
+  });
+
+  // Toggle Skeleton Screen on Load
+  window.addEventListener('load', () => {
+    const skeleton = document.getElementById('skeleton-loader');
+    const listings = document.getElementById('listings-container');
+    if (skeleton && listings) {
+      skeleton.style.display = 'none';
+      listings.classList.remove('d-none');
+    }
+  });
+</script>

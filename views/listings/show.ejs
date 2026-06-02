@@ -7,7 +7,7 @@
   <div class="col-12 col-md-6">
     <div class="show-card h-100">
       <img
-        src="<%= listing.image %>"
+        src="<%= listing.image.url %>"
         class="show-img"
         style="height: 100%; min-height: 400px; border-radius: 1.5rem;"
         alt="listing_image"
@@ -60,8 +60,8 @@
   <div class="col-12 col-md-10 offset-md-1">
     <hr class="my-4 opacity-10">
     
-    <% if (currUser) { %>
     <!-- Leave a Review Form -->
+    <% if (currUser) { %>
     <div class="review-form-container p-4 bg-light rounded-4 mb-5 border border-light-subtle shadow-sm">
       <h4 class="fw-bold mb-3"><i class="fa-solid fa-comment-dots me-2 text-primary"></i>Leave a Review</h4>
       <form action="/listings/<%= listing._id %>/reviews" method="POST" class="needs-validation" novalidate>
@@ -109,6 +109,14 @@
         </button>
       </form>
     </div>
+    <% } else { %>
+    <div class="review-form-container p-4 bg-light rounded-4 mb-5 border border-light-subtle text-center shadow-sm">
+      <h5 class="fw-bold text-dark mb-2"><i class="fa-solid fa-lock text-muted me-2"></i>Want to leave a review?</h5>
+      <p class="text-muted small mb-3">You must be logged in to share your experience with this listing.</p>
+      <a href="/login" class="btn btn-dark edit-btn px-4 py-2 text-white border-0 rounded-3 mt-1 shadow-sm">
+        <i class="fa-solid fa-right-to-bracket me-2"></i>Log In to Review
+      </a>
+    </div>
     <% } %>
 
     <!-- All Reviews Section -->
@@ -124,8 +132,13 @@
               <div class="card h-100 review-card border border-light-subtle rounded-3 p-3 shadow-sm bg-white">
                 <div class="card-body p-0 d-flex flex-column h-100">
                   <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="card-title fw-bold mb-0 text-dark">
-                      <i class="fa-solid fa-circle-user me-2 text-secondary fs-5"></i><%= review.author ? review.author.username : 'Anonymous Guest' %>
+                    <h6 class="card-title fw-bold mb-0 text-dark d-flex align-items-center">
+                      <% if (review.author && review.author.avatar) { %>
+                        <img src="<%= review.author.avatar %>" alt="avatar" class="rounded-circle me-2 border border-2 border-primary" style="width: 32px; height: 32px; object-fit: cover;" />
+                      <% } else { %>
+                        <i class="fa-solid fa-circle-user me-2 text-secondary fs-5"></i>
+                      <% } %>
+                      <%= review.author ? review.author.username : 'Anonymous Guest' %>
                     </h6>
                     <span class="text-muted fs-7"><%= new Date(review.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
                   </div>

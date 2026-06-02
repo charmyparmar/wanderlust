@@ -1,0 +1,116 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <h2 class="fw-bold mb-4"><i class="fa-solid fa-heart text-danger me-2"></i>My Wishlist</h2>
+
+  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4">
+    <% if (wishlist.length === 0) { %>
+      <div class="col-12 text-center py-5">
+        <div class="text-muted fs-1 mb-3"><i class="fa-regular fa-heart"></i></div>
+        <h4 class="fw-bold text-dark">Your wishlist is empty</h4>
+        <p class="text-muted small">Tap the heart icon on any accommodation listing to save it to your wishlist!</p>
+        <a href="/listings" class="btn btn-dark edit-btn px-4 py-2 mt-2 border-0 text-white rounded-3">
+          <i class="fa-solid fa-house-chimney me-2"></i>Explore Stays
+        </a>
+      </div>
+    <% } else { %>
+      <% for (let listing of wishlist) { %>
+        <div class="col">
+          <div class="card h-100 border-0 rounded-4 overflow-hidden bg-transparent transition-all hover-scale" style="position: relative;">
+            <!-- Wishlist Heart Button (Toggles off) -->
+            <button class="wishlist-btn" data-id="<%= listing._id %>" aria-label="Remove from Wishlist">
+              <i class="fa-solid fa-heart"></i>
+            </button>
+            
+            <a href="/listings/<%= listing._id %>" class="listing-link">
+              <div class="overflow-hidden rounded-4">
+                <img 
+                  src="<%= listing.image.url %>" 
+                  class="card-img-top w-100" 
+                  style="height: 18rem; object-fit: cover; transition: var(--transition);" 
+                  alt="<%= listing.title %>"
+                />
+              </div>
+              
+              <div class="card-body px-1 py-3">
+                <p class="card-text mb-0">
+                  <b class="d-block text-dark text-truncate" style="font-size: 1.05rem;"><%= listing.title %></b>
+                  <span class="text-muted small d-block mb-1"><i class="fa-solid fa-location-dot me-1"></i><%= listing.location %>, <%= listing.country %></span>
+                  <span class="text-secondary fw-bold">&#8377; <%= listing.price.toLocaleString('en-IN') %> <small class="fw-normal text-muted">/ night</small></span>
+                </p>
+              </div>
+            </a>
+          </div>
+        </div>
+      <% } %>
+    <% } %>
+  </div>
+</div>
+
+<style>
+  .wishlist-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: white;
+    cursor: pointer;
+    z-index: 10;
+    text-shadow: 0 0 6px rgba(0,0,0,0.6);
+    transition: transform 0.2s ease;
+    padding: 0;
+    outline: none;
+  }
+  .wishlist-btn:hover {
+    transform: scale(1.15);
+  }
+  .wishlist-btn .fa-solid {
+    color: #ff385c;
+  }
+  .hover-scale {
+    transition: var(--transition);
+  }
+  .hover-scale:hover {
+    transform: translateY(-5px);
+  }
+  .hover-scale:hover img {
+    transform: scale(1.03);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.wishlist-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const listingId = btn.getAttribute('data-id');
+      try {
+        const response = await fetch(`/wishlist/toggle/${listingId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.json();
+        // For wishlist page, we can simply hide or fade out the card!
+        if (!data.added) {
+          const cardCol = btn.closest('.col');
+          cardCol.style.transition = 'all 0.4s ease';
+          cardCol.style.opacity = '0';
+          cardCol.style.transform = 'scale(0.8)';
+          setTimeout(() => {
+            cardCol.remove();
+            // If zero remaining cards, reload to show empty state
+            if (document.querySelectorAll('.wishlist-btn').length === 0) {
+              window.location.reload();
+            }
+          }, 400);
+        }
+      } catch (err) {
+        console.error('Error removing from wishlist:', err);
+      }
+    });
+  });
+</script>

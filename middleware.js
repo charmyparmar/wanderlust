@@ -32,7 +32,7 @@ module.exports.isOwner = async (req, res, next) => {
     req.flash('error', 'Listing you requested for does not exist!');
     return res.redirect('/listings');
   }
-  if (!listing.owner.equals(res.locals.currUser._id)) {
+  if (!listing.owner || !listing.owner.equals(res.locals.currUser._id)) {
     req.flash('error', 'You are not the owner of this listing!');
     return res.redirect(`/listings/${id}`);
   }
@@ -46,7 +46,7 @@ module.exports.isReviewAuthor = async (req, res, next) => {
     req.flash('error', 'Review you requested for does not exist!');
     return res.redirect(`/listings/${id}`);
   }
-  if (!review.author.equals(res.locals.currUser._id)) {
+  if (!review.author || !review.author.equals(res.locals.currUser._id)) {
     req.flash('error', 'You are not the author of this review!');
     return res.redirect(`/listings/${id}`);
   }

@@ -1,10 +1,10 @@
+require('dotenv').config({ path: './.env' }); // if run from workspace root
+require('dotenv').config({ path: '../.env' }); // if run from init directory
 const mongoose = require('mongoose');
-const initData = require('./data');
-const { Listing } = require('../models/listing');
+const initData = require('./data.js');
+const { Listing } = require('../models/listing.js');
 
-require('dotenv').config();
-
-const database_url = process.env.MONGO_URL;
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/wanderlust';
 
 main()
   .then(() => {
@@ -15,7 +15,7 @@ main()
   });
 
 async function main() {
-  await mongoose.connect(database_url);
+  await mongoose.connect(MONGO_URL);
 }
 
 const initDB = async () => {

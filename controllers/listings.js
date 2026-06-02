@@ -3,8 +3,27 @@ const ExpressError = require('../utils/ExpressError');
 
 // Index
 module.exports.index = async (req, res) => {
-  const allListings = await Listing.find({});
-  res.render('listings/index', { allListings });
+  let { search, category } = req.query;
+  let query = {};
+
+  if (search) {
+    query.$or = [
+      { title: { $regex: search, $options: 'i' } },
+      { location: { $regex: search, $options: 'i' } },
+      { country: { $regex: search, $options: 'i' } },
+    ];
+  }
+
+  if (category) {
+    query.category = category;
+  }
+
+  const allListings = await Listing.find(query);
+  res.render('listings/index', {
+    allListings,
+    searchQuery: search || '',
+    selectedCategory: category || '',
+  });
 };
 
 // New
@@ -14,8 +33,11 @@ module.exports.renderNewForm = (req, res) => {
 
 // Create
 module.exports.createListing = async (req, res) => {
+  let url = req.file.path;
+  let filename = req.file.filename;
   const newListing = new Listing(req.body.listing);
   newListing.owner = req.user._id;
+  newListing.image = { url, filename };
   await newListing.save();
   res.redirect('/listings');
 };
@@ -46,18 +68,29 @@ module.exports.renderEditForm = async (req, res) => {
     req.flash('error', 'Listing you requested for does not exist!');
     return res.redirect('/listings');
   }
-  res.render('listings/edit', { listing });
+
+  let originalImageUrl = listing.image.url;
+  originalImageUrl = originalImageUrl.replace('/upload', '/upload/w_250');
+
+  res.render('listings/edit', { listing, originalImageUrl });
 };
 
 // Update
 module.exports.updateListing = async (req, res) => {
   const { id } = req.params;
-  const updateListing = await Listing.findByIdAndUpdate(id, req.body.listing, {
+  const updatedListing = await Listing.findByIdAndUpdate(id, req.body.listing, {
     runValidators: true,
-    returnDocument: 'after',
+    new: true,
   });
 
-  if (!updateListing) {
+  if (typeof req.file !== 'undefined') {
+    let url = req.file.path;
+    let filename = req.file.filename;
+    updatedListing.image = { url, filename };
+    await updatedListing.save();
+  }
+
+  if (!updatedListing) {
     throw new ExpressError(404, 'Listing not found');
   }
   res.redirect(`/listings/${id}`);

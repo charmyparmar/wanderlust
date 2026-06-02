@@ -19,6 +19,12 @@ const userSchema = new Schema({
   },
   verificationToken: String,
   verificationTokenExpires: Date,
+  wishlist: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Listing',
+    },
+  ],
 });
 
 userSchema.plugin(passportLocalMongoose);

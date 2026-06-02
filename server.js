@@ -18,6 +18,7 @@ const csrf = require('csurf');
 const listingsRoutes = require('./routes/listings');
 const reviewsRoutes = require('./routes/review');
 const userRoutes = require('./routes/user');
+const wishlistRoutes = require('./routes/wishlist');
 
 const PORT = process.env.PORT;
 const database_url = process.env.MONGO_URL;
@@ -55,8 +56,8 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: true,
   cookie: {
-    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    expires: Date.now() + 8 * 60 * 60 * 1000,
+    maxAge: 8 * 60 * 60 * 1000,
     httpOnly: true,
   },
 };
@@ -89,12 +90,14 @@ app.get('/', (req, res) => {
 app.use('/', userRoutes);
 app.use('/listings', listingsRoutes);
 app.use('/listings/:id/reviews', reviewsRoutes);
+app.use('/wishlist', wishlistRoutes);
 
 app.use((req, res, next) => {
   next(new ExpressError(404, 'Page not Found!!'));
 });
 
-app.use((err, req, res, next) => {
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, _next) => {
   if (err.code === 'EBADCSRFTOKEN') {
     req.flash('error', 'Security check failed. Session expired or form tampered with.');
     return res.redirect('back');
