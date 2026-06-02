@@ -25,7 +25,8 @@ module.exports.signup = async (req, res, next) => {
     const registeredUser = await User.register(newUser, password);
 
     // Send verification email in background
-    sendVerificationEmail(email, username, token).catch((err) => {
+    const origin = `${req.protocol}://${req.get('host')}`;
+    sendVerificationEmail(email, username, token, origin).catch((err) => {
       console.error('Failed to send verification email:', err);
     });
 

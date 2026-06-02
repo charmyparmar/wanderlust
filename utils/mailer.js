@@ -26,8 +26,13 @@ if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
   };
 }
 
-module.exports.sendVerificationEmail = async (email, username, token) => {
-  const verifyUrl = `http://localhost:${process.env.PORT || 3000}/verify-email?token=${token}`;
+module.exports.sendVerificationEmail = async (
+  email,
+  username,
+  token,
+  origin = 'http://localhost:3000'
+) => {
+  const verifyUrl = `${origin}/verify-email?token=${token}`;
 
   const mailOptions = {
     from: `"Wanderlust Admin" <${process.env.EMAIL_USER || 'no-reply@wanderlust.com'}>`,
