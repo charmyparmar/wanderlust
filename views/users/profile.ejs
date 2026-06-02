@@ -2,7 +2,33 @@
 
 <div class="row mt-5 justify-content-center">
   <div class="col-11 col-sm-10 col-md-8 col-lg-6">
-    <div class="card shadow border border-light-subtle rounded-4 p-4 bg-white">
+    <div class="card shadow border border-light-subtle rounded-4 p-4 bg-white" style="position: relative;">
+      
+      <!-- Top Right Edit Profile Settings Button -->
+      <button 
+        class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center border-light-subtle bg-light shadow-sm" 
+        style="position: absolute; top: 20px; right: 20px; width: 38px; height: 38px; color: var(--text-main, #222222); transition: var(--transition); z-index: 10;" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#collapseEdit" 
+        aria-expanded="false" 
+        aria-controls="collapseEdit"
+        aria-label="Edit Profile"
+      >
+        <i class="fa-solid fa-user-gear"></i>
+      </button>
+
+      <!-- Email Verification Banner -->
+      <% if (!currUser.isVerified) { %>
+        <div class="alert alert-warning border-0 rounded-3 mb-4 p-3 d-flex align-items-center" style="gap: 1rem; background-color: rgba(255, 193, 7, 0.12); border: 1px solid rgba(255, 193, 7, 0.25) !important; text-align: left;">
+          <i class="fa-solid fa-circle-exclamation fs-3 text-warning"></i>
+          <div>
+            <h6 class="fw-bold mb-1" style="color: #856404; font-size: 0.95rem;">Verify your email address</h6>
+            <p class="mb-0 small text-secondary">A verification link was sent to <strong><%= currUser.email %></strong>. Please verify to unlock accommodation listings and reviews.</p>
+          </div>
+        </div>
+      <% } %>
+
       <div class="text-center mb-4">
         <!-- User Avatar Image -->
         <div class="d-inline-block position-relative mb-3">
@@ -34,28 +60,8 @@
         </div>
 
         <!-- Edit Profile Collapsible Form -->
-        <div class="accordion border-0 mt-3" id="editProfileAccordion">
-          <div class="accordion-item border-0">
-            <h2 class="accordion-header" id="headingEdit">
-              <button 
-                class="accordion-button collapsed bg-light text-dark fw-semibold rounded-3 border-0 py-2.5 px-3" 
-                type="button" 
-                data-bs-toggle="collapse" 
-                data-bs-target="#collapseEdit" 
-                aria-expanded="false" 
-                aria-controls="collapseEdit"
-              >
-                <i class="fa-solid fa-user-gear me-2 text-primary"></i>Edit Profile Settings
-              </button>
-            </h2>
-            <div 
-              id="collapseEdit" 
-              class="accordion-collapse collapse" 
-              aria-labelledby="headingEdit" 
-              data-bs-parent="#editProfileAccordion"
-            >
-              <div class="accordion-body px-0 pt-3 pb-0">
-                <form action="/profile?_method=PUT" method="POST" class="needs-validation" novalidate>
+        <div id="collapseEdit" class="collapse border-top mt-4 pt-3 border-light-subtle">
+          <form action="/profile?_method=PUT" method="POST" class="needs-validation" novalidate>
                   
                   <!-- Email Input -->
                   <div class="mb-3">
@@ -169,9 +175,6 @@
                     <i class="fa-solid fa-save me-2"></i>Save Updates
                   </button>
                 </form>
-              </div>
-            </div>
-          </div>
         </div>
 
       </div>

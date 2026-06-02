@@ -4,6 +4,8 @@ const listingsController = require('../controllers/listings');
 const { listingSchema } = require('../utils/validator/schema');
 const ExpressError = require('../utils/ExpressError');
 
+const { isLoggedIn, isEmailVerified, isOwner } = require('../middleware');
+
 const validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
   if (error) {
@@ -18,18 +20,28 @@ const validateListing = (req, res, next) => {
 router.get('/', listingsController.index);
 
 // Create
-router.post('/', validateListing, listingsController.createListing);
+router.post('/', isLoggedIn, isEmailVerified, validateListing, listingsController.createListing);
 
 // New form
-router.get('/new', listingsController.renderNewForm);
+router.get('/new', isLoggedIn, isEmailVerified, listingsController.renderNewForm);
 
 // Update
-router.patch('/:id', validateListing, listingsController.updateListing);
+router.patch(
+  '/:id',
+  isLoggedIn,
+  isEmailVerified,
+  isOwner,
+  validateListing,
+  listingsController.updateListing
+);
 
 // Show, Delete
-router.route('/:id').get(listingsController.showListing).delete(listingsController.deleteListing);
+router
+  .route('/:id')
+  .get(listingsController.showListing)
+  .delete(isLoggedIn, isEmailVerified, isOwner, listingsController.deleteListing);
 
 // Edit form
-router.get('/:id/edit', listingsController.renderEditForm);
+router.get('/:id/edit', isLoggedIn, isEmailVerified, isOwner, listingsController.renderEditForm);
 
 module.exports = router;

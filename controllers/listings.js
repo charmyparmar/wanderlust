@@ -23,7 +23,18 @@ module.exports.createListing = async (req, res) => {
 // Show
 module.exports.showListing = async (req, res) => {
   const { id } = req.params;
-  const listing = await Listing.findById(id).populate('reviews');
+  const listing = await Listing.findById(id)
+    .populate({
+      path: 'reviews',
+      populate: {
+        path: 'author',
+      },
+    })
+    .populate('owner');
+  if (!listing) {
+    req.flash('error', 'Listing you requested for does not exist!');
+    return res.redirect('/listings');
+  }
   res.render('listings/show', { listing });
 };
 
@@ -31,6 +42,10 @@ module.exports.showListing = async (req, res) => {
 module.exports.renderEditForm = async (req, res) => {
   const { id } = req.params;
   const listing = await Listing.findById(id);
+  if (!listing) {
+    req.flash('error', 'Listing you requested for does not exist!');
+    return res.redirect('/listings');
+  }
   res.render('listings/edit', { listing });
 };
 
