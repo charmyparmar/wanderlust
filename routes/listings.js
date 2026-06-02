@@ -3,6 +3,7 @@ const router = express.Router();
 const listingsController = require('../controllers/listings');
 const { listingSchema } = require('../utils/validator/schema');
 const ExpressError = require('../utils/ExpressError');
+const wrapAsync = require('../utils/wrapAsync');
 const { isLoggedIn, isOwner } = require('../middleware');
 
 const validateListing = (req, res, next) => {
@@ -16,24 +17,30 @@ const validateListing = (req, res, next) => {
 };
 
 // Index
-router.get('/', listingsController.index);
+router.get('/', wrapAsync(listingsController.index));
 
 // Create
-router.post('/', isLoggedIn, validateListing, listingsController.createListing);
+router.post('/', isLoggedIn, validateListing, wrapAsync(listingsController.createListing));
 
 // New form
 router.get('/new', isLoggedIn, listingsController.renderNewForm);
 
 // Update
-router.patch('/:id', isLoggedIn, isOwner, validateListing, listingsController.updateListing);
+router.patch(
+  '/:id',
+  isLoggedIn,
+  isOwner,
+  validateListing,
+  wrapAsync(listingsController.updateListing)
+);
 
 // Show, Delete
 router
   .route('/:id')
-  .get(listingsController.showListing)
-  .delete(isLoggedIn, isOwner, listingsController.deleteListing);
+  .get(wrapAsync(listingsController.showListing))
+  .delete(isLoggedIn, isOwner, wrapAsync(listingsController.deleteListing));
 
 // Edit form
-router.get('/:id/edit', isLoggedIn, isOwner, listingsController.renderEditForm);
+router.get('/:id/edit', isLoggedIn, isOwner, wrapAsync(listingsController.renderEditForm));
 
 module.exports = router;

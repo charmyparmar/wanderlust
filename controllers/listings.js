@@ -3,8 +3,17 @@ const ExpressError = require('../utils/ExpressError');
 
 // Index
 module.exports.index = async (req, res) => {
-  const allListings = await Listing.find({});
-  res.render('listings/index', { allListings });
+  let { search } = req.query;
+  let query = {};
+  if (search) {
+    query.$or = [
+      { title: { $regex: search, $options: 'i' } },
+      { location: { $regex: search, $options: 'i' } },
+      { country: { $regex: search, $options: 'i' } },
+    ];
+  }
+  const allListings = await Listing.find(query);
+  res.render('listings/index', { allListings, searchQuery: search || '' });
 };
 
 // New

@@ -18,6 +18,23 @@
         <a class="nav-link" href="/listings">All Listing</a>
         <a class="nav-link" href="/listings/new">Add new Listing</a>
       </div>
+
+      <!-- Search Bar -->
+      <div class="navbar-nav mx-auto ps-md-5">
+        <form class="d-flex align-items-center" role="search" action="/listings" method="GET">
+          <input 
+            class="form-control rounded-pill border-grey search-input" 
+            type="search" 
+            name="search" 
+            placeholder="Search destinations" 
+            aria-label="Search" 
+            value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+            style="padding: 0.5rem 1.5rem; width: 260px; font-size: 0.9rem; transition: var(--transition);"
+          />
+          <button class="btn rounded-circle d-flex align-items-center justify-content-center ms-2" type="submit" style="width: 38px; height: 38px; background-color: var(--primary); color: white; border: none; transition: var(--transition);">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </form>
       <div class="navbar-nav ms-auto align-items-center">
         <!-- Theme Switch -->
         <button id="themeToggle" class="btn nav-link border-0 p-2 d-flex align-items-center me-2" aria-label="Toggle Theme" style="background: none; outline: none; box-shadow: none;">

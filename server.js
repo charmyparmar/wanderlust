@@ -85,7 +85,8 @@ app.use((req, res, next) => {
   next(new ExpressError(404, 'Page not Found!!'));
 });
 
-app.use((err, req, res, next) => {
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, _next) => {
   if (err.name === 'ValidationError') {
     return res.status(400).send(err.message);
   }
