@@ -30,4 +30,14 @@ router.get('/mylistings', isLoggedIn, userController.renderMyListings);
 
 router.get('/logout', userController.logout);
 
+router
+  .route('/forgot-password')
+  .get(userController.renderForgotPasswordForm)
+  .post(userController.forgotPassword);
+
+router
+  .route('/reset-password')
+  .get(userController.renderResetPasswordForm)
+  .post(userController.resetPassword);
+
 module.exports = router;

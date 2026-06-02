@@ -19,6 +19,8 @@ const userSchema = new Schema({
   },
   verificationToken: String,
   verificationTokenExpires: Date,
+  resetPasswordToken: String,
+  resetPasswordTokenExpires: Date,
   wishlist: [
     {
       type: Schema.Types.ObjectId,

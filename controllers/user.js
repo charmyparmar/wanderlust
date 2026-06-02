@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const User = require('../models/user');
 const { Listing } = require('../models/listing');
-const { sendVerificationEmail } = require('../utils/mailer');
+const { sendVerificationEmail, sendResetPasswordEmail } = require('../utils/mailer');
 
 module.exports.renderSignupForm = (req, res) => {
   res.render('users/signup.ejs');
@@ -145,5 +145,93 @@ module.exports.resendVerification = async (req, res, next) => {
   } catch (e) {
     req.flash('error', e.message);
     res.redirect('/profile');
+  }
+};
+
+module.exports.renderForgotPasswordForm = (req, res) => {
+  res.render('users/forgot.ejs');
+};
+
+module.exports.forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      req.flash('error', 'No account with that email address exists.');
+      return res.redirect('/forgot-password');
+    }
+
+    // Generate token
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = token;
+    user.resetPasswordTokenExpires = Date.now() + 3600000; // 1 Hour
+    await user.save();
+
+    const origin = `${req.protocol}://${req.get('host')}`;
+    await sendResetPasswordEmail(user.email, user.username, token, origin);
+
+    req.flash('success', 'An email with password reset instructions has been sent!');
+    res.redirect('/login');
+  } catch (e) {
+    req.flash('error', e.message);
+    res.redirect('/forgot-password');
+  }
+};
+
+module.exports.renderResetPasswordForm = async (req, res) => {
+  try {
+    const { token } = req.query;
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordTokenExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      req.flash('error', 'Password reset token is invalid or has expired.');
+      return res.redirect('/forgot-password');
+    }
+
+    res.render('users/reset.ejs', { token });
+  } catch (e) {
+    req.flash('error', e.message);
+    res.redirect('/forgot-password');
+  }
+};
+
+module.exports.resetPassword = async (req, res, next) => {
+  try {
+    const { token, password, confirmPassword } = req.body;
+
+    if (password !== confirmPassword) {
+      req.flash('error', 'Passwords do not match.');
+      return res.redirect(`/reset-password?token=${token}`);
+    }
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordTokenExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      req.flash('error', 'Password reset token is invalid or has expired.');
+      return res.redirect('/forgot-password');
+    }
+
+    user.setPassword(password, async (err) => {
+      if (err) return next(err);
+      user.resetPasswordToken = undefined;
+      user.resetPasswordTokenExpires = undefined;
+      await user.save();
+
+      req.login(user, (err) => {
+        if (err) return next(err);
+        req.flash('success', 'Your password has been reset successfully!');
+        res.redirect('/listings');
+      });
+    });
+  } catch (e) {
+    req.flash('error', e.message);
+    res.redirect('/forgot-password');
   }
 };

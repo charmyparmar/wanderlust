@@ -1,0 +1,43 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-5 justify-content-center">
+  <div class="col-11 col-sm-10 col-md-6 col-lg-4">
+    <div class="card shadow-sm border border-light-subtle rounded-4 p-4 bg-white">
+      <div class="text-center mb-4">
+        <i class="fa-solid fa-key mb-3" style="font-size: 3rem; color: var(--primary);"></i>
+        <h2 class="fw-bold text-dark">Forgot Password?</h2>
+        <p class="text-muted">Enter your email address to receive reset instructions</p>
+      </div>
+
+      <form action="/forgot-password" method="POST" class="needs-validation" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        
+        <!-- Email -->
+        <div class="mb-4">
+          <label for="email" class="form-label fw-semibold">Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-grey rounded-start-3"><i class="fa-solid fa-envelope text-secondary"></i></span>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              class="form-control border-grey rounded-end-3"
+              placeholder="name@example.com"
+              required
+            />
+            <div class="invalid-feedback">Please enter a valid email address.</div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button class="btn btn-dark w-100 py-2.5 fw-semibold rounded-3 edit-btn border-0 text-white transition-all">
+          <i class="fa-solid fa-paper-plane me-2"></i>Send Reset Link
+        </button>
+
+        <div class="text-center mt-4">
+          <p class="mb-0 text-muted fs-6">Back to <a href="/login" class="fw-semibold text-decoration-none" style="color: var(--primary);">Log In</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
