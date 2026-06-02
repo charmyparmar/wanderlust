@@ -23,8 +23,11 @@ module.exports.renderNewForm = (req, res) => {
 
 // Create
 module.exports.createListing = async (req, res) => {
+  let url = req.file.path;
+  let filename = req.file.filename;
   const newListing = new Listing(req.body.listing);
   newListing.owner = req.user._id;
+  newListing.image = { url, filename };
   await newListing.save();
   res.redirect('/listings');
 };
@@ -47,18 +50,29 @@ module.exports.showListing = async (req, res) => {
 module.exports.renderEditForm = async (req, res) => {
   const { id } = req.params;
   const listing = await Listing.findById(id);
-  res.render('listings/edit', { listing });
+
+  let originalImageUrl = listing.image.url;
+  originalImageUrl = originalImageUrl.replace('/upload', '/upload/w_250');
+
+  res.render('listings/edit', { listing, originalImageUrl });
 };
 
 // Update
 module.exports.updateListing = async (req, res) => {
   const { id } = req.params;
-  const updateListing = await Listing.findByIdAndUpdate(id, req.body.listing, {
+  const updatedListing = await Listing.findByIdAndUpdate(id, req.body.listing, {
     runValidators: true,
-    returnDocument: 'after',
+    new: true,
   });
 
-  if (!updateListing) {
+  if (typeof req.file !== 'undefined') {
+    let url = req.file.path;
+    let filename = req.file.filename;
+    updatedListing.image = { url, filename };
+    await updatedListing.save();
+  }
+
+  if (!updatedListing) {
     throw new ExpressError(404, 'Listing not found');
   }
   res.redirect(`/listings/${id}`);
