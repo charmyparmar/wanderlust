@@ -28,6 +28,20 @@ const listingSchema = new Schemas(
       type: String,
       required: [true, 'Country is required'],
     },
+    category: {
+      type: String,
+      required: [true, 'Category is required'],
+      enum: [
+        'Rooms',
+        'Iconic Cities',
+        'Mountains',
+        'Castles',
+        'Amazing Pools',
+        'Camping',
+        'Farms',
+        'Arctic',
+      ],
+    },
     reviews: [
       {
         type: Schemas.Types.ObjectId,

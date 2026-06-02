@@ -13,6 +13,12 @@ const userSchema = new Schema({
     default:
       'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=250&auto=format&fit=crop',
   },
+  wishlist: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Listing',
+    },
+  ],
 });
 
 userSchema.plugin(passportLocalMongoose);

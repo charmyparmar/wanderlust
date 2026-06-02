@@ -11,6 +11,18 @@ const listingSchema = Joi.object({
       url: Joi.string().allow('', null),
       filename: Joi.string().allow('', null),
     }),
+    category: Joi.string()
+      .valid(
+        'Rooms',
+        'Iconic Cities',
+        'Mountains',
+        'Castles',
+        'Amazing Pools',
+        'Camping',
+        'Farms',
+        'Arctic'
+      )
+      .required(),
   }).required(),
 });
 

@@ -16,6 +16,7 @@ const MongoStore = require('connect-mongo').MongoStore;
 const listingsRoutes = require('./routes/listings');
 const reviewsRoutes = require('./routes/review');
 const userRoutes = require('./routes/user');
+const wishlistRoutes = require('./routes/wishlist');
 
 const PORT = process.env.PORT;
 const database_url = process.env.MONGO_URL;
@@ -80,6 +81,7 @@ app.get('/', (req, res) => {
 app.use('/', userRoutes);
 app.use('/listings', listingsRoutes);
 app.use('/listings/:id/reviews', reviewsRoutes);
+app.use('/wishlist', wishlistRoutes);
 
 app.use((req, res, next) => {
   next(new ExpressError(404, 'Page not Found!!'));

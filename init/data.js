@@ -9,6 +9,7 @@ const sampleListings = [
     price: 4500,
     location: 'Goa',
     country: 'India',
+    category: 'Rooms',
   },
   {
     title: 'Modern Apartment',
@@ -20,6 +21,7 @@ const sampleListings = [
     price: 2800,
     location: 'Mumbai',
     country: 'India',
+    category: 'Rooms',
   },
   {
     title: 'Mountain Cabin Retreat',
@@ -31,6 +33,7 @@ const sampleListings = [
     price: 1800,
     location: 'Manali',
     country: 'India',
+    category: 'Mountains',
   },
   {
     title: 'Lake View Resort',
@@ -42,6 +45,7 @@ const sampleListings = [
     price: 3500,
     location: 'Udaipur',
     country: 'India',
+    category: 'Iconic Cities',
   },
   {
     title: 'Desert Camp Stay',
@@ -53,6 +57,7 @@ const sampleListings = [
     price: 1500,
     location: 'Jaisalmer',
     country: 'India',
+    category: 'Camping',
   },
   {
     title: 'Luxury Penthouse',
@@ -64,6 +69,7 @@ const sampleListings = [
     price: 6000,
     location: 'Bangalore',
     country: 'India',
+    category: 'Iconic Cities',
   },
   {
     title: 'Traditional Kerala House',
@@ -75,6 +81,7 @@ const sampleListings = [
     price: 2200,
     location: 'Alleppey',
     country: 'India',
+    category: 'Rooms',
   },
   {
     title: 'Forest Treehouse',
@@ -86,6 +93,7 @@ const sampleListings = [
     price: 1700,
     location: 'Wayanad',
     country: 'India',
+    category: 'Camping',
   },
   {
     title: 'Snow View Cottage',
@@ -97,6 +105,7 @@ const sampleListings = [
     price: 2600,
     location: 'Shimla',
     country: 'India',
+    category: 'Arctic',
   },
   {
     title: 'Island Resort',
@@ -108,6 +117,7 @@ const sampleListings = [
     price: 8000,
     location: 'Maldives',
     country: 'Maldives',
+    category: 'Amazing Pools',
   },
 ];
 
