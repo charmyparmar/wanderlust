@@ -1,43 +1,56 @@
-# Wanderlust
+# Wanderlust ✈️
 
-A premium, full-stack travel and accommodation marketplace modeled after Airbnb. Wanderlust is built using the **MVC (Model-View-Controller)** pattern, featuring robust user authentication, interactive review systems, secure cloud-based media uploads, and dynamic modern UI/UX design.
-
-Designed to showcase clean code practices, industry-standard authentication pipelines, secure database architectures, and production-grade APIs.
+A premium, production-grade, full-stack travel and accommodation marketplace modeled after Airbnb. Wanderlust is built using the **MVC (Model-View-Controller)** design pattern, featuring robust user security pipelines, interactive review systems, secure cloud-based media uploads, dynamic wishlists, and a beautiful UI/UX.
 
 ---
 
-## Key Features
+## 🌟 Key Features
 
-- **Secure Authentication & Authorization**: Industry-standard registration, login, and session persistence using `passport` and `passport-local-mongoose`.
-- **Complete CRUD Operations**: Users can create, browse, edit, and delete detailed property listings.
-- ** Cloud Media Storage**: Integrated with **Cloudinary API** via `multer` for secure, on-the-fly image uploads and automatic WebP format compression.
-- ** Interactive Review & Rating Engine**: Clean star-rating system permitting authenticated guests to review properties, with strict owner/author guardrails.
-- **Premium UI/UX & Dark Mode Toggle**: Harmonious, modern CSS styling featuring responsive layouts, glassmorphism elements, subtle micro-animations, and a seamless theme switcher.
-- **Data Security & Validation**: Robust server-side and client-side schemas enforced via **Joi validation** and Express middleware to prevent bad state submissions.
-- **Robust Architecture**:
-  - **RESTful Routing**: Structured resource endpoints following standard HTTP protocols.
-  - **Centralized Error Handling**: Unified asynchronous error wrapper (`wrapAsync`) and custom `ExpressError` middleware handler.
-  - **Modern Code Quality**: Linter rules (ESLint) and code style formatter (Prettier) enforced strictly through Git `husky` pre-commit hooks.
+### 🔒 Industry-Grade Security & Authentication
+- **Passport.js Engine**: Seamless registration, local-strategy login, and session persistence using `passport` and `passport-local-mongoose`.
+- **Double-Layer Email Verification**: Real-time sign-up verification utilizing **Nodemailer** to send unique expiration-guarded tokens, unlocking listings and reviews only for verified wanderers.
+- **CSRF Protection**: Comprehensive Cross-Site Request Forgery (`csurf` middleware) protection across all POST/PATCH/DELETE endpoints.
+- **Production Session Storage**: High-performance, production-grade session persistence in MongoDB using `connect-mongo` instead of volatile in-memory sessions.
+
+### 🏠 Property & Marketplace Engine (CRUD)
+- **Advanced Listings**: Create, browse, edit, and delete highly detailed property listings with categorization (Rooms, Mountains, Pools, Farms, etc.).
+- **Interactive Map & Geocoding**: Integrated geocoding to display property locations on an interactive map.
+- **Dynamic Wishlist System**: Authenticated users can curate, save, and manage their favorite listings into a personalized wishlist.
+
+### ☁️ Media & Performance
+- **Cloud Media Hosting**: Integrated with **Cloudinary API** via `multer` for direct image uploads.
+- **Automated Compression**: Features automatic image resizing and transformation (`/w_250`) for superfast card loading and low bandwidth usage.
+
+### 💬 Interactive Social Features
+- **Review & Rating Engine**: Sleek 5-star rating system with strict owner/author guardrails (only authenticated guests can review, and authors can delete their reviews).
+- **Custom User Profiles**: Dedicated profile dashboards displaying user status (verified/unverified), custom preset avatars, and quick access to listing management.
+
+### 📐 Robust Architecture & Code Quality
+- **RESTful Endpoints**: Predictable, clean API mapping.
+- **Validation Schemas**: Client & Server-side validation powered by **Joi** schemas.
+- **Centralized Error Handling**: Unified asynchronous error handler (`wrapAsync`) paired with customized `ExpressError` middleware.
+- **Husky & Lint-Staged Pipeline**: Automated pre-commit checks strictly enforcing **ESLint** code formatting rules and Conventional Commit standards.
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- **Frontend**: HTML5, Vanilla CSS3 (Custom gradients, animations, CSS variables), EJS (Embedded JavaScript templates), Bootstrap 5, FontAwesome icons
-- **Backend**: Node.js, Express.js (REST APIs, Router)
-- **Database**: MongoDB (NoSQL), Mongoose ODM
-- **Authentication**: Passport.js & Passport Local Strategy
-- **Media Hosting**: Cloudinary Storage Cloud API
-- **Testing & Quality Assurance**: ESLint, Prettier, Husky, Commitlint
+- **Frontend**: HTML5, Vanilla CSS3 (glassmorphism elements, micro-animations), EJS (Embedded JavaScript Templates), Bootstrap 5, FontAwesome Icons.
+- **Backend**: Node.js, Express.js (REST APIs, Router).
+- **Database**: MongoDB (NoSQL), Mongoose ODM.
+- **Authentication & Security**: Passport.js, Nodemailer (Email Verification), Csurf (CSRF Protection).
+- **Media Hosting**: Cloudinary Storage Cloud API.
+- **Production Persistence**: Express-Session & Connect-Mongo (MongoDB Session Store).
+- **Quality Assurance**: ESLint, Prettier, Husky Pre-commit hooks, Commitlint.
 
 ---
 
-## Architecture Overview (MVC)
+## 📐 Architecture Overview (MVC)
 
 ```mermaid
 graph TD
-    Client[Browser Client] -->|HTTP Requests| Router[Express Router]
-    Router -->|Middleware Guard: isLoggedIn/isOwner| Middleware[Express Middlewares]
+    Client[Browser Client] -->|HTTP Requests / CSRF Token| Router[Express Router]
+    Router -->|Middleware Guards: isLoggedIn / isEmailVerified / isOwner| Middleware[Express Middlewares]
     Middleware -->|Routing| Controller[Controllers]
     Controller -->|Queries & Operations| Model[Mongoose Models]
     Model -->|Persist| MongoDB[(MongoDB Database)]
@@ -47,12 +60,12 @@ graph TD
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) (v16+) and [MongoDB](https://www.mongodb.com/) installed on your local machine.
+Make sure you have [Node.js](https://nodejs.org/) (v20+) and [MongoDB](https://www.mongodb.com/) installed and running locally.
 
-### Installation
+### Installation & Setup
 
 1. **Clone the Repository**:
    ```bash
@@ -60,23 +73,26 @@ Make sure you have [Node.js](https://nodejs.org/) (v16+) and [MongoDB](https://w
    cd wanderlust
    ```
 
-2. **Install Dependencies**:
+2. **Install Project Dependencies**:
    ```bash
    npm install
    ```
 
 3. **Configure Environment Variables**:
-   Create a `.env` file in the root directory of the `wanderlust` project:
+   Create a `.env` file in the root directory of the project:
    ```env
-   PORT=3000
-   MONGO_URL=mongodb://127.0.0.1:27017/wanderluster
-   CLOUD_NAME=your_cloudinary_name
+   PORT=8080
+   MONGO_URL=mongodb://127.0.0.1:27017/wanderlust
+   SECRET=yoursupersecureproductionsessionsecret
+   CLOUD_NAME=your_cloudinary_cloud_name
    CLOUD_API_KEY=your_cloudinary_api_key
    CLOUD_API_SECRET=your_cloudinary_api_secret
+   EMAIL_USER=your_verification_email@gmail.com
+   EMAIL_PASS=your_email_app_password
    ```
 
 4. **Seed the Database**:
-   Populate your database with mock listings:
+   Populate your database with mock property listings:
    ```bash
    node init/index.js
    ```
@@ -86,15 +102,13 @@ Make sure you have [Node.js](https://nodejs.org/) (v16+) and [MongoDB](https://w
    npm run dev
    ```
 
-6. Open your browser and navigate to `http://localhost:3000` to run the application.
+6. Open your browser and navigate to `http://localhost:8080` to experience the app.
 
 ---
 
-## Code Quality & Workflow Guardrails
+## 🛡️ Code Quality & Workflows
 
-This project utilizes pre-commit workflows to ensure a high standard of code safety and format consistency before any code is committed:
-- **Husky & Lint-Staged**: Auto-formats scripts, styling sheets, and configurations.
-- **ESLint & Prettier**: Enforces semantic consistency and catches unused variables or syntax errors in real-time.
-- **Commitlint**: Restricts commits to Conventional Commits standards (e.g. `feat: ...`, `fix: ...`, `chore: ...`).
-
----
+To maintain pristine code health, we run automatic validations during commits:
+- **Husky & Lint-Staged**: Prevent raw, unformatted scripts from entering the codebase.
+- **ESLint & Prettier**: Auto-checks layout rules, spacing, and semantic conventions.
+- **Commitlint**: Mandates standardized Conventional Commit patterns (e.g. `feat: ...`, `fix: ...`, `docs: ...`).
