@@ -6,6 +6,10 @@ const ExpressError = require('../utils/ExpressError');
 const wrapAsync = require('../utils/wrapAsync');
 const { isLoggedIn, isOwner } = require('../middleware');
 
+const multer = require('multer');
+const { storage } = require('../cloudConfig');
+const upload = multer({ storage });
+
 const validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
   if (error) {
@@ -20,7 +24,13 @@ const validateListing = (req, res, next) => {
 router.get('/', wrapAsync(listingsController.index));
 
 // Create
-router.post('/', isLoggedIn, validateListing, wrapAsync(listingsController.createListing));
+router.post(
+  '/',
+  isLoggedIn,
+  upload.single('listing[image]'),
+  validateListing,
+  wrapAsync(listingsController.createListing)
+);
 
 // New form
 router.get('/new', isLoggedIn, listingsController.renderNewForm);
@@ -30,6 +40,7 @@ router.patch(
   '/:id',
   isLoggedIn,
   isOwner,
+  upload.single('listing[image]'),
   validateListing,
   wrapAsync(listingsController.updateListing)
 );
