@@ -7,6 +7,7 @@ const { saveRedirectUrl, isLoggedIn } = require('../middleware');
 router.route('/signup').get(userController.renderSignupForm).post(userController.signup);
 
 router.get('/verify-email', userController.verifyEmail);
+router.post('/resend-verification', isLoggedIn, userController.resendVerification);
 
 router
   .route('/login')

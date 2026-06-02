@@ -25,6 +25,12 @@
           <div>
             <h6 class="fw-bold mb-1" style="color: #856404; font-size: 0.95rem;">Verify your email address</h6>
             <p class="mb-0 small text-secondary">A verification link was sent to <strong><%= currUser.email %></strong>. Please verify to unlock accommodation listings and reviews.</p>
+            <form action="/resend-verification" method="POST" class="mt-2">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-warning btn-sm fw-bold border-0 text-dark" style="background-color: rgba(255, 193, 7, 0.35); transition: 0.2s;">
+                <i class="fa-solid fa-paper-plane me-1"></i>Resend Verification Email
+              </button>
+            </form>
           </div>
         </div>
       <% } %>

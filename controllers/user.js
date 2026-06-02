@@ -120,3 +120,30 @@ module.exports.updateProfile = async (req, res) => {
     res.redirect('/profile');
   }
 };
+
+module.exports.resendVerification = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user.isVerified) {
+      req.flash('error', 'Your email is already verified.');
+      return res.redirect('/profile');
+    }
+
+    // Generate secure random verification token
+    const token = crypto.randomBytes(32).toString('hex');
+    user.verificationToken = token;
+    user.verificationTokenExpires = Date.now() + 24 * 3600000; // 24 Hours
+    await user.save();
+
+    // Send verification email in background
+    const origin = `${req.protocol}://${req.get('host')}`;
+    await sendVerificationEmail(user.email, user.username, token, origin);
+
+    req.flash('success', 'A new verification link has been sent to your email!');
+    res.redirect('/profile');
+  } catch (e) {
+    req.flash('error', e.message);
+    res.redirect('/profile');
+  }
+};
