@@ -6,6 +6,7 @@
     <h1>Create new listing</h1>
 
     <form method="POST" action="/listings" novalidate class="needs-validation">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input

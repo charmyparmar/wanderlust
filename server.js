@@ -6,11 +6,14 @@ const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
+const { MongoStore } = require('connect-mongo');
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 require('dotenv').config();
+
+const csrf = require('csurf');
 
 const listingsRoutes = require('./routes/listings');
 const reviewsRoutes = require('./routes/review');
@@ -34,8 +37,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, '/public')));
 
+const store = MongoStore.create({
+  mongoUrl: database_url,
+  crypto: {
+    secret: process.env.SECRET,
+  },
+  touchAfter: 24 * 3600,
+});
+
+store.on('error', (err) => {
+  console.log('ERROR IN MONGO SESSION STORE', err);
+});
+
 const sessionOptions = {
-  secret: 'mysupersecretcode',
+  store,
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -50,6 +66,8 @@ app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(csrf());
+
 passport.use(new LocalStrategy(User.authenticate()));
 
 passport.serializeUser(User.serializeUser());
@@ -59,6 +77,7 @@ app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   res.locals.currUser = req.user;
+  res.locals.csrfToken = req.csrfToken();
   next();
 });
 
@@ -76,7 +95,10 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  // eslint-disable-line no-unused-vars
+  if (err.code === 'EBADCSRFTOKEN') {
+    req.flash('error', 'Security check failed. Session expired or form tampered with.');
+    return res.redirect('back');
+  }
   if (err.name === 'ValidationError') {
     return res.status(400).send(err.message);
   }
