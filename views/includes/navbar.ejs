@@ -35,6 +35,19 @@
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </form>
+      <div class="navbar-nav ms-auto align-items-center">
+        <!-- Theme Switch -->
+        <button id="themeToggle" class="btn nav-link border-0 p-2 d-flex align-items-center me-2" aria-label="Toggle Theme" style="background: none; outline: none; box-shadow: none;">
+          <i class="fa-solid fa-moon theme-icon text-muted" style="font-size: 1.25rem; transition: var(--transition);"></i>
+        </button>
+
+        <% if(!currUser) { %>
+          <a class="nav-link fw-semibold" href="/signup"><i class="fa-solid fa-user-plus me-1"></i>Sign Up</a>
+          <a class="nav-link fw-semibold" href="/login"><i class="fa-solid fa-right-to-bracket me-1"></i>Log In</a>
+        <% } else { %>
+          <a class="nav-link fw-semibold text-primary" href="/profile"><i class="fa-solid fa-circle-user me-1"></i><%= currUser.username %></a>
+          <a class="nav-link fw-semibold" href="/logout"><i class="fa-solid fa-right-from-bracket me-1"></i>Log Out</a>
+        <% } %>
       </div>
     </div>
   </div>

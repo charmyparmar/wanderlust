@@ -1,0 +1,15 @@
+<% if(success && success.length > 0){ %>
+<div class="alert alert-success alert-dismissible fade show col-12 col-md-6 offset-md-3 mt-3 rounded-3 shadow-sm border-0 d-flex align-items-center" role="alert">
+  <i class="fa-solid fa-circle-check me-2 fs-5"></i>
+  <div class="flex-grow-1"><%= success %></div>
+  <button type="button" class="btn-close mb-0" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<% } %>
+
+<% if(error && error.length > 0){ %>
+<div class="alert alert-danger alert-dismissible fade show col-12 col-md-6 offset-md-3 mt-3 rounded-3 shadow-sm border-0 d-flex align-items-center" role="alert">
+  <i class="fa-solid fa-circle-exclamation me-2 fs-5"></i>
+  <div class="flex-grow-1"><%= error %></div>
+  <button type="button" class="btn-close mb-0" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<% } %>

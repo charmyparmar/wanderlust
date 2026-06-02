@@ -1,0 +1,194 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-5 justify-content-center">
+  <div class="col-11 col-sm-10 col-md-8 col-lg-6">
+    <div class="card shadow border border-light-subtle rounded-4 p-4 bg-white">
+      <div class="text-center mb-4">
+        <!-- User Avatar Image -->
+        <div class="d-inline-block position-relative mb-3">
+          <img 
+            src="<%= currUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=250&auto=format&fit=crop' %>" 
+            alt="User Avatar" 
+            class="rounded-circle shadow border border-3 border-primary" 
+            style="width: 120px; height: 120px; object-fit: cover;"
+          />
+        </div>
+        <h3 class="fw-bold text-dark mb-1"><%= currUser.username %></h3>
+        <p class="text-muted small mb-0"><i class="fa-solid fa-earth-americas me-2"></i>Wanderer since <%= new Date(currUser._id.getTimestamp()).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) %></p>
+      </div>
+
+      <div class="profile-details">
+        <!-- Manage Listings Call To Action -->
+        <div class="mb-4 text-center">
+          <a href="/mylistings" class="btn btn-primary w-100 py-2.5 fw-semibold rounded-3 edit-btn border-0 text-white transition-all shadow-sm">
+            <i class="fa-solid fa-hotel me-2"></i>Manage My Listings
+          </a>
+        </div>
+
+        <div class="mb-3 d-flex align-items-center justify-content-between p-3 rounded bg-light">
+          <div>
+            <span class="d-block text-muted small fw-semibold">EMAIL ADDRESS</span>
+            <span class="fs-6 fw-semibold text-dark"><%= currUser.email %></span>
+          </div>
+          <i class="fa-solid fa-envelope text-secondary fs-5"></i>
+        </div>
+
+        <!-- Edit Profile Collapsible Form -->
+        <div class="accordion border-0 mt-3" id="editProfileAccordion">
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header" id="headingEdit">
+              <button 
+                class="accordion-button collapsed bg-light text-dark fw-semibold rounded-3 border-0 py-2.5 px-3" 
+                type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#collapseEdit" 
+                aria-expanded="false" 
+                aria-controls="collapseEdit"
+              >
+                <i class="fa-solid fa-user-gear me-2 text-primary"></i>Edit Profile Settings
+              </button>
+            </h2>
+            <div 
+              id="collapseEdit" 
+              class="accordion-collapse collapse" 
+              aria-labelledby="headingEdit" 
+              data-bs-parent="#editProfileAccordion"
+            >
+              <div class="accordion-body px-0 pt-3 pb-0">
+                <form action="/profile?_method=PUT" method="POST" class="needs-validation" novalidate>
+                  
+                  <!-- Email Input -->
+                  <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold small text-muted">Update Email</label>
+                    <input 
+                      type="email" 
+                      name="email" 
+                      id="email" 
+                      class="form-control border-grey rounded-3" 
+                      value="<%= currUser.email %>" 
+                      required 
+                    />
+                    <div class="invalid-feedback">Please enter a valid email address.</div>
+                  </div>
+
+                  <!-- Avatar Select/Input -->
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold small text-muted d-block">Choose an Avatar Preset</label>
+                    <div class="row g-2 mb-3">
+                      <!-- Preset 1 -->
+                      <div class="col-3 text-center">
+                        <label class="avatar-option pointer-cursor">
+                          <input 
+                            type="radio" 
+                            name="avatarPreset" 
+                            value="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=250&auto=format&fit=crop" 
+                            class="d-none"
+                            onclick="document.getElementById('customAvatarUrl').value = this.value;"
+                            <%= currUser.avatar === 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=250&auto=format&fit=crop' ? 'checked' : '' %>
+                          />
+                          <img 
+                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=250&auto=format&fit=crop" 
+                            alt="Avatar 1" 
+                            class="rounded-circle border border-2 p-0.5" 
+                            style="width: 50px; height: 50px; object-fit: cover;"
+                          />
+                        </label>
+                      </div>
+                      <!-- Preset 2 -->
+                      <div class="col-3 text-center">
+                        <label class="avatar-option pointer-cursor">
+                          <input 
+                            type="radio" 
+                            name="avatarPreset" 
+                            value="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=250&auto=format&fit=crop" 
+                            class="d-none"
+                            onclick="document.getElementById('customAvatarUrl').value = this.value;"
+                            <%= currUser.avatar === 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=250&auto=format&fit=crop' ? 'checked' : '' %>
+                          />
+                          <img 
+                            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=250&auto=format&fit=crop" 
+                            alt="Avatar 2" 
+                            class="rounded-circle border border-2 p-0.5" 
+                            style="width: 50px; height: 50px; object-fit: cover;"
+                          />
+                        </label>
+                      </div>
+                      <!-- Preset 3 -->
+                      <div class="col-3 text-center">
+                        <label class="avatar-option pointer-cursor">
+                          <input 
+                            type="radio" 
+                            name="avatarPreset" 
+                            value="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=250&auto=format&fit=crop" 
+                            class="d-none"
+                            onclick="document.getElementById('customAvatarUrl').value = this.value;"
+                            <%= currUser.avatar === 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=250&auto=format&fit=crop' ? 'checked' : '' %>
+                          />
+                          <img 
+                            src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=250&auto=format&fit=crop" 
+                            alt="Avatar 3" 
+                            class="rounded-circle border border-2 p-0.5" 
+                            style="width: 50px; height: 50px; object-fit: cover;"
+                          />
+                        </label>
+                      </div>
+                      <!-- Preset 4 -->
+                      <div class="col-3 text-center">
+                        <label class="avatar-option pointer-cursor">
+                          <input 
+                            type="radio" 
+                            name="avatarPreset" 
+                            value="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=250&auto=format&fit=crop" 
+                            class="d-none"
+                            onclick="document.getElementById('customAvatarUrl').value = this.value;"
+                            <%= currUser.avatar === 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=250&auto=format&fit=crop' ? 'checked' : '' %>
+                          />
+                          <img 
+                            src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=250&auto=format&fit=crop" 
+                            alt="Avatar 4" 
+                            class="rounded-circle border border-2 p-0.5" 
+                            style="width: 50px; height: 50px; object-fit: cover;"
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Custom URL -->
+                    <label for="customAvatarUrl" class="form-label fw-semibold small text-muted">Or Custom Image URL</label>
+                    <input 
+                      type="text" 
+                      name="avatar" 
+                      id="customAvatarUrl" 
+                      class="form-control border-grey rounded-3" 
+                      placeholder="Paste image address/URL" 
+                      value="<%= currUser.avatar %>" 
+                    />
+                  </div>
+
+                  <button class="btn btn-dark edit-btn px-4 py-2 border-0 text-white rounded-3 w-100">
+                    <i class="fa-solid fa-save me-2"></i>Save Updates
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Interactivity highlight for avatar option selection */
+  .avatar-option input[type="radio"]:checked + img {
+    border-color: var(--primary) !important;
+    background-color: rgba(254, 66, 77, 0.1);
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(254, 66, 77, 0.2);
+  }
+  .avatar-option img {
+    cursor: pointer;
+    transition: var(--transition);
+  }
+</style>
