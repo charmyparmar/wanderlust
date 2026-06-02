@@ -3,6 +3,7 @@ const router = express.Router();
 const listingsController = require('../controllers/listings');
 const { listingSchema } = require('../utils/validator/schema');
 const ExpressError = require('../utils/ExpressError');
+const wrapAsync = require('../utils/wrapAsync');
 
 const validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
@@ -15,21 +16,24 @@ const validateListing = (req, res, next) => {
 };
 
 // Index
-router.get('/', listingsController.index);
+router.get('/', wrapAsync(listingsController.index));
 
 // Create
-router.post('/', validateListing, listingsController.createListing);
+router.post('/', validateListing, wrapAsync(listingsController.createListing));
 
 // New form
 router.get('/new', listingsController.renderNewForm);
 
 // Update
-router.patch('/:id', validateListing, listingsController.updateListing);
+router.patch('/:id', validateListing, wrapAsync(listingsController.updateListing));
 
 // Show, Delete
-router.route('/:id').get(listingsController.showListing).delete(listingsController.deleteListing);
+router
+  .route('/:id')
+  .get(wrapAsync(listingsController.showListing))
+  .delete(wrapAsync(listingsController.deleteListing));
 
 // Edit form
-router.get('/:id/edit', listingsController.renderEditForm);
+router.get('/:id/edit', wrapAsync(listingsController.renderEditForm));
 
 module.exports = router;
