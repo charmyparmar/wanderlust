@@ -4,11 +4,11 @@ const listingsController = require('../controllers/listings');
 const { listingSchema } = require('../utils/validator/schema');
 const ExpressError = require('../utils/ExpressError');
 const wrapAsync = require('../utils/wrapAsync');
-const { isLoggedIn, isOwner } = require('../middleware');
-
 const multer = require('multer');
 const { storage } = require('../cloudConfig');
 const upload = multer({ storage });
+
+const { isLoggedIn, isEmailVerified, isOwner } = require('../middleware');
 
 const validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
@@ -27,18 +27,20 @@ router.get('/', wrapAsync(listingsController.index));
 router.post(
   '/',
   isLoggedIn,
+  isEmailVerified,
   upload.single('listing[image]'),
   validateListing,
   wrapAsync(listingsController.createListing)
 );
 
 // New form
-router.get('/new', isLoggedIn, listingsController.renderNewForm);
+router.get('/new', isLoggedIn, isEmailVerified, listingsController.renderNewForm);
 
 // Update
 router.patch(
   '/:id',
   isLoggedIn,
+  isEmailVerified,
   isOwner,
   upload.single('listing[image]'),
   validateListing,
@@ -49,9 +51,15 @@ router.patch(
 router
   .route('/:id')
   .get(wrapAsync(listingsController.showListing))
-  .delete(isLoggedIn, isOwner, wrapAsync(listingsController.deleteListing));
+  .delete(isLoggedIn, isEmailVerified, isOwner, wrapAsync(listingsController.deleteListing));
 
 // Edit form
-router.get('/:id/edit', isLoggedIn, isOwner, wrapAsync(listingsController.renderEditForm));
+router.get(
+  '/:id/edit',
+  isLoggedIn,
+  isEmailVerified,
+  isOwner,
+  wrapAsync(listingsController.renderEditForm)
+);
 
 module.exports = router;

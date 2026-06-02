@@ -1,5 +1,7 @@
+const crypto = require('crypto');
 const User = require('../models/user');
 const { Listing } = require('../models/listing');
+const { sendVerificationEmail } = require('../utils/mailer');
 
 module.exports.renderSignupForm = (req, res) => {
   res.render('users/signup.ejs');
@@ -8,19 +10,72 @@ module.exports.renderSignupForm = (req, res) => {
 module.exports.signup = async (req, res, next) => {
   try {
     let { username, email, password } = req.body;
-    const newUser = new User({ email, username });
+
+    // Generate secure random verification token
+    const token = crypto.randomBytes(32).toString('hex');
+    const tokenExpires = Date.now() + 24 * 6600000; // 24 Hours
+
+    const newUser = new User({
+      email,
+      username,
+      verificationToken: token,
+      verificationTokenExpires: tokenExpires,
+    });
+
     const registeredUser = await User.register(newUser, password);
+
+    // Send verification email in background
+    sendVerificationEmail(email, username, token).catch((err) => {
+      console.error('Failed to send verification email:', err);
+    });
 
     req.login(registeredUser, (err) => {
       if (err) {
         return next(err);
       }
-      req.flash('success', 'Welcome to WanderLust!');
+      req.flash(
+        'success',
+        'Welcome to WanderLust! We have sent a verification link to your email.'
+      );
       res.redirect('/listings');
     });
   } catch (e) {
     req.flash('error', e.message);
     res.redirect('/signup');
+  }
+};
+
+module.exports.verifyEmail = async (req, res, next) => {
+  try {
+    const { token } = req.query;
+    const user = await User.findOne({
+      verificationToken: token,
+      verificationTokenExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      req.flash('error', 'Verification link is invalid or has expired.');
+      return res.redirect('/profile');
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpires = undefined;
+    await user.save();
+
+    if (!req.isAuthenticated()) {
+      req.login(user, (err) => {
+        if (err) return next(err);
+        req.flash('success', 'Email verified successfully! Welcome to WanderLust!');
+        return res.redirect('/profile');
+      });
+    } else {
+      req.flash('success', 'Email verified successfully!');
+      res.redirect('/profile');
+    }
+  } catch (e) {
+    req.flash('error', e.message);
+    res.redirect('/profile');
   }
 };
 
